@@ -1,31 +1,42 @@
-const sliderContainer = document.querySelector('.slider-container')
-const slideRight = document.querySelector('.right-slide')
-const slideLeft = document.querySelector('.left-slide')
-const upButton = document.querySelector('.up-button')
-const downButton = document.querySelector('.down-button')
-const slidesLength = slideRight.querySelectorAll('div').length
+const loveMe = document.querySelector('.loveMe')
+const times = document.querySelector('#times')
 
-let activeSlideIndex = 0
+let clickTime = 0
+let timesClicked = 0
 
-slideLeft.style.top = `-${(slidesLength - 1) * 100}vh`
-
-upButton.addEventListener('click', () => changeSlide('up'))
-downButton.addEventListener('click', () => changeSlide('down'))
-
-const changeSlide = (direction) => {
-    const sliderHeight = sliderContainer.clientHeight
-    if(direction === 'up') {
-        activeSlideIndex++
-        if(activeSlideIndex > slidesLength - 1) {
-            activeSlideIndex = 0
-        }
-    } else if(direction === 'down') {
-        activeSlideIndex--
-        if(activeSlideIndex < 0) {
-            activeSlideIndex = slidesLength - 1
+loveMe.addEventListener('click', (e) => {
+    if(clickTime === 0) {
+        clickTime = new Date().getTime()
+    } else {
+        if((new Date().getTime() - clickTime) < 800) {
+            createHeart(e)
+            clickTime = 0
+        } else {
+            clickTime = new Date().getTime()
         }
     }
+})
 
-    slideRight.style.transform = `translateY(-${activeSlideIndex * sliderHeight}px)`
-    slideLeft.style.transform = `translateY(${activeSlideIndex * sliderHeight}px)`
+const createHeart = (e) => {
+    const heart = document.createElement('i')
+    heart.classList.add('fas')
+    heart.classList.add('fa-heart')
+
+    const x = e.clientX
+    const y = e.clientY
+
+    const leftOffset = e.target.offsetLeft
+    const topOffset = e.target.offsetTop
+
+    const xInside = x - leftOffset
+    const yInside = y - topOffset
+
+    heart.style.top = `${yInside}px`
+    heart.style.left = `${xInside}px`
+
+    loveMe.appendChild(heart)
+
+    times.innerHTML = ++timesClicked
+
+    setTimeout(() => heart.remove(), 1000)
 }
